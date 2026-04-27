@@ -1,68 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creative Designer Portfolio</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <style>
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .project-item { transition: 0.4s ease; text-decoration: none; color: inherit; }
-        .project-item:hover { transform: translateY(-10px); }
-        .project-item img { 
-            width: 100%; 
-            aspect-ratio: 16/9; 
-            object-fit: cover; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-        }
-        .project-item h3 { margin: 20px 0 5px; font-size: 22px; }
-        .project-item p { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-    </style>
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Designer Portfolio</title>
 </head>
 <body>
+    <div id="navbar-placeholder"></div>
 
-    <header style="padding: 100px 20px; text-align: center;">
-        <h1 style="font-size: 60px; margin: 0;">CREATIVE DESIGNER</h1>
-        <p>Crafting visual stories through unique aesthetics.</p>
-    </header>
-
-    <section id="featured-work">
-        <h2 style="text-align: center; margin-bottom: 50px;">Featured Work</h2>
-        <div id="featured-display-grid" class="featured-grid">
-            </div>
+    <section class="hero container">
+        <h1 style="font-size: 4rem; margin-top: 100px;">CREATIVE <span style="color: var(--primary-red);">DESIGNER</span></h1>
+        <p style="color: var(--text-gray); max-width: 600px;">Crafting visual stories through red, black, and white aesthetics.</p>
+        <button class="btn-primary" onclick="location.href='projects.html'">View My Work</button>
     </section>
 
+    <section class="container">
+        <h2>Featured Work</h2>
+        <div id="featured-projects" class="project-grid"></div>
+    </section>
+
+    <script src="../js files/store.js"></script>
+    <script src="../js files/components.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const allProjects = JSON.parse(localStorage.getItem('projects')) || [];
-            const featuredIds = JSON.parse(localStorage.getItem('featuredProjectIds')) || [];
-            const grid = document.getElementById('featured-display-grid');
-
-            // Find projects that match the IDs saved in Admin
-            const toDisplay = allProjects.filter(p => featuredIds.includes(p.id));
-
-            if (toDisplay.length === 0) {
-                grid.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Selection is empty. Visit Admin to feature projects.</p>";
-                return;
-            }
-
-            grid.innerHTML = toDisplay.map(project => `
-                <a href="project-detail.html?id=${project.id}" class="project-item">
-                    <img src="${project.image}" alt="${project.title}">
-                    <h3>${project.title}</h3>
-                    <p>${project.category || 'Portfolio Content'}</p>
-                </a>
-            `).join('');
-        });
+        // Render Featured Projects (First 3)
+        const featured = Store.getProjects().slice(0, 3);
+        document.getElementById('featured-projects').innerHTML = featured.map(p => Components.projectCard(p)).join('');
     </script>
-
 </body>
 </html>
