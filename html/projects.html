@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Work | Portfolio</title>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <main class="container">
+        <section style="margin-top: 50px;">
+            <h1>Selected <span style="color: var(--primary-red);">Works</span></h1>
+            
+            <div class="controls" style="margin: 30px 0; display: flex; gap: 15px; flex-wrap: wrap;">
+                <input type="text" id="searchInput" placeholder="Search projects..." 
+                       style="padding: 12px; flex-grow: 1; background: var(--card-bg); border: 1px solid #333; color: white; border-radius: 4px;">
+                
+                <select id="categoryFilter" style="padding: 12px; background: var(--card-bg); border: 1px solid #333; color: white; border-radius: 4px;">
+                    <option value="all">All Categories</option>
+                    <option value="Branding">Branding</option>
+                    <option value="UI/UX">UI/UX</option>
+                </select>
+            </div>
+
+            <div id="projects-grid" class="project-grid"></div>
+        </section>
+    </main>
+
+    <script src="../js files/store.js"></script>
+    <script src="../js files/components.js"></script>
+    <script>
+        const grid = document.getElementById('projects-grid');
+        const search = document.getElementById('searchInput');
+        const filter = document.getElementById('categoryFilter');
+
+        function render(items) {
+            grid.innerHTML = items.map(p => Components.projectCard(p)).join('');
+        }
+
+        render(Store.getProjects());
+
+        [search, filter].forEach(el => el.addEventListener('input', () => {
+            const val = search.value.toLowerCase();
+            const cat = filter.value;
+            const filtered = Store.getProjects().filter(p => {
+                const matchSearch = p.title.toLowerCase().includes(val);
+                const matchCat = cat === 'all' || p.category === cat;
+                return matchSearch && matchCat;
+            });
+            render(filtered);
+        }));
+    </script>
+</body>
+</html>

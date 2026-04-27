@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+    <main class="container" style="padding-bottom: 50px;">
+        
+        <section id="login-section">
+            <div class="admin-card">
+                <h2>Admin Login</h2>
+                <input type="text" id="user" placeholder="User">
+                <input type="password" id="pass" placeholder="Pass">
+                <button class="btn-primary" onclick="login()" style="width:100%">LOGIN</button>
+            </div>
+        </section>
+
+        <section id="admin-dashboard" style="display:none;">
+            <div class="admin-card">
+                <h2 id="form-title">Project Manager</h2>
+                <form id="upload-form" onsubmit="handleUpload(event)">
+                    <input type="text" id="title" placeholder="Title" required>
+                    <div style="display:flex; gap:10px; margin-bottom:20px;">
+                        <select id="category" style="margin:0; flex-grow:1;"></select>
+                        <button type="button" class="btn-primary" onclick="handleAddCategory()">+ NEW</button>
+                    </div>
+                    <textarea id="desc" rows="3" placeholder="Description"></textarea>
+                    <input type="file" onchange="handleFileSelect(event)" style="margin-bottom:10px;">
+                    <input type="text" id="imgUrl" placeholder="Or Image Link">
+                    <button type="submit" id="submit-btn" class="btn-primary" style="width:100%">PUBLISH</button>
+                </form>
+            </div>
+
+            <div class="admin-card" style="margin-top:20px;">
+                <h3>Manage Projects</h3>
+                <div id="admin-project-list"></div>
+            </div>
+
+            <div class="admin-card" style="margin-top:20px;">
+                <h3>Manage Categories</h3>
+                <div id="category-manage-list"></div>
+            </div>
+
+            <div class="admin-card" style="margin-top:20px; border-top: 4px solid var(--primary-red);">
+                <h3>Messages <span style="color:var(--primary-red)">Inbox</span></h3>
+                <div id="admin-messages-list"></div>
+            </div>
+
+            <button onclick="location.reload()" style="display:block; margin:20px auto; color:gray; background:none; border:none; cursor:pointer;">Logout</button>
+        </section>
+    </main>
+    <script src="../js files/store.js"></script>
+    <script src="../js files/components.js"></script>
+    <script src="../js files/admin.js"></script>
+</body>
+</html>

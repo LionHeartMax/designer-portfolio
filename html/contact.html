@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Contact | Get In Touch</title>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <main class="container" style="margin-top: 100px; text-align: center;">
+        <section style="max-width: 600px; margin: 0 auto;">
+            <h1 style="font-size: 3rem;">LET'S <span style="color: var(--primary-red);">TALK.</span></h1>
+            <p style="color: var(--text-gray); margin-bottom: 40px;">Have a project in mind? Looking for a collaboration? Send a message.</p>
+
+            <form id="contact-form" style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <input type="text" placeholder="Name" required style="background: var(--card-bg); border: 1px solid #333; color: white; padding: 15px; border-radius: 4px;">
+                    <input type="email" placeholder="Email" required style="background: var(--card-bg); border: 1px solid #333; color: white; padding: 15px; border-radius: 4px;">
+                </div>
+                <input type="text" placeholder="Subject" style="background: var(--card-bg); border: 1px solid #333; color: white; padding: 15px; border-radius: 4px;">
+                <textarea placeholder="Your Message" rows="6" style="background: var(--card-bg); border: 1px solid #333; color: white; padding: 15px; border-radius: 4px; resize: vertical;"></textarea>
+                
+                <button type="submit" class="btn-primary" style="padding: 20px; letter-spacing: 2px;">SEND MESSAGE</button>
+            </form>
+
+            <div style="margin-top: 60px; display: flex; justify-content: center; gap: 40px; color: var(--text-gray);">
+                <span>hello@yourdomain.com</span>
+                <span><a href="https://www.instagram.com/as.graphics24/" target="_blank">@Instagram</a></span>
+                <span><a href="https://www.behance.net/ASA2424" target="_blank">Behance</a></span>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js files/store.js"></script>
+    <script src="../js files/components.js"></script>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Create message object
+    const newMessage = {
+        name: e.target[0].value,
+        email: e.target[1].value,
+        text: e.target[3].value // Adjust index if your form fields differ
+    };
+
+    // Save to Store
+    Store.saveMessage(newMessage);
+    
+    alert("Message sent to the admin dashboard!");
+    e.target.reset();
+});
+    </script>
+</body>
+</html>

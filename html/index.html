@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Designer Portfolio</title>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <section class="hero container">
+        <h1 style="font-size: 4rem; margin-top: 100px;">CREATIVE <span style="color: var(--primary-red);">DESIGNER</span></h1>
+        <p style="color: var(--text-gray); max-width: 600px;">Crafting visual stories through red, black, and white aesthetics.</p>
+        <button class="btn-primary" onclick="location.href='projects.html'">View My Work</button>
+    </section>
+
+    <section class="container">
+        <h2>Featured Work</h2>
+        <div id="featured-projects" class="project-grid"></div>
+    </section>
+
+    <script src="../js files/store.js"></script>
+    <script src="../js files/components.js"></script>
+    <script>
+        // Render Featured Projects (First 3)
+        const featured = Store.getProjects().slice(0, 3);
+        document.getElementById('featured-projects').innerHTML = featured.map(p => Components.projectCard(p)).join('');
+    </script>
+</body>
+</html>
