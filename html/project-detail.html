@@ -14,15 +14,18 @@
     <script src="/js files/store.js"></script>
     <script src="/js files/components.js"></script>
     <script>
-    // We wrap everything in an async function so we can use 'await'
     async function renderDetails() {
         const params = new URLSearchParams(window.location.search);
         const projectId = params.get('id');
         
-        // IMPORTANT: We must 'await' the projects from the cloud
         const project = await Store.getProjectById(projectId);
 
         if (project) {
+            // Logic to handle the date safely
+            const dateDisplay = project.created_at 
+                ? new Date(project.created_at).toLocaleDateString() 
+                : "Recent";
+
             document.getElementById('detail-container').innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
                     <div>
@@ -33,7 +36,7 @@
                         <h1 style="font-size: 3rem; margin: 10px 0;">${project.title}</h1>
                         <p style="color: var(--text-gray); line-height: 1.8; margin-bottom: 30px;">${project.description || 'No description provided.'}</p>
                         <hr style="border: 0; border-top: 1px solid #333; margin-bottom: 20px;">
-                        <p><strong>Published:</strong> ${new Date(project.created_at).toLocaleDateString() || 'Recent'}</p>
+                        <p><strong>Published:</strong> ${dateDisplay}</p>
                     </div>
                 </div>
             `;
@@ -42,7 +45,6 @@
         }
     }
 
-    // Run the function
     renderDetails();
 </script>
 </body>

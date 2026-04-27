@@ -12,17 +12,27 @@ const Components = {
         </nav>
     `,
 
-    // Updated to use project.image_url to match Supabase columns
-    projectCard: (project) => `
-        <div class="card" style="background: var(--card-bg); border-radius: 8px; overflow: hidden;">
-            <img src="${project.image_url}" style="width: 100%; height: 250px; object-fit: cover;" onerror="this.src='assets/placeholder.jpg'">
-            <div style="padding: 20px;">
-                <span style="color: var(--primary-red); font-size: 0.8rem;">${project.category}</span>
-                <h3 style="margin: 10px 0;">${project.title}</h3>
-                <a href="project-detail.html?id=${project.id}" style="color: white; text-decoration: underline; font-size: 0.9rem;">View Details</a>
+    // Updated to handle missing dates gracefully
+    projectCard: (project) => {
+        // This checks if created_at exists, otherwise defaults to "Recent Work"
+        const displayDate = project.created_at 
+            ? new Date(project.created_at).toLocaleDateString() 
+            : "Recent Work";
+
+        return `
+            <div class="card" style="background: var(--card-bg); border-radius: 8px; overflow: hidden;">
+                <img src="${project.image_url}" style="width: 100%; height: 250px; object-fit: cover;" onerror="this.src='assets/placeholder.jpg'">
+                <div style="padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--primary-red); font-size: 0.8rem;">${project.category}</span>
+                        <span style="color: #888; font-size: 0.7rem;">${displayDate}</span>
+                    </div>
+                    <h3 style="margin: 10px 0;">${project.title}</h3>
+                    <a href="project-detail.html?id=${project.id}" style="color: white; text-decoration: underline; font-size: 0.9rem;">View Details</a>
+                </div>
             </div>
-        </div>
-    `
+        `;
+    }
 };
 
 // Safety Check: Only inject if the placeholder exists
