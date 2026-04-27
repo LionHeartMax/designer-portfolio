@@ -2,58 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <style>
+        :root { --primary: #000; --bg: #f4f4f4; --white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .admin-card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        h1, h2 { color: var(--primary); margin-top: 0; }
+        
+        /* Selection Grid */
+        .selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; margin: 20px 0; }
+        .select-card { 
+            border: 2px solid #eee; padding: 10px; cursor: pointer; border-radius: 10px; 
+            text-align: center; transition: 0.2s; position: relative; background: #fff;
+        }
+        .select-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; }
+        .select-card p { font-size: 14px; margin: 10px 0 0; font-weight: 600; }
+        
+        /* Selected State */
+        .select-card.selected { border-color: var(--primary); background: #fafafa; transform: scale(1.02); }
+        .select-card.selected::before {
+            content: '✓'; position: absolute; top: -10px; right: -10px; 
+            background: var(--primary); color: #fff; width: 28px; height: 28px; 
+            border-radius: 50%; line-height: 28px; font-weight: bold;
+        }
+
+        .btn-save { 
+            background: var(--primary); color: #fff; padding: 15px 30px; 
+            border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; 
+            width: 100%; transition: 0.3s;
+        }
+        .btn-save:hover { opacity: 0.8; }
+    </style>
 </head>
 <body>
-    <div id="navbar-placeholder"></div>
-    <main class="container" style="padding-bottom: 50px;">
+    <div class="container">
+        <h1>Dashboard Control</h1>
         
-        <section id="login-section">
-            <div class="admin-card">
-                <h2>Admin Login</h2>
-                <input type="text" id="user" placeholder="User">
-                <input type="password" id="pass" placeholder="Pass">
-                <button class="btn-primary" onclick="login()" style="width:100%">LOGIN</button>
-            </div>
-        </section>
+        <div class="admin-card">
+            <h2>Manage Featured Work</h2>
+            <p>Select which projects appear on your Home Page hero section.</p>
+            <div id="featured-selection-list" class="selector-grid">
+                </div>
+            <button id="save-featured-btn" class="btn-save">Save Home Page Changes</button>
+        </div>
 
-        <section id="admin-dashboard" style="display:none;">
-            <div class="admin-card">
-                <h2 id="form-title">Project Manager</h2>
-                <form id="upload-form" onsubmit="handleUpload(event)">
-                    <input type="text" id="title" placeholder="Title" required>
-                    <div style="display:flex; gap:10px; margin-bottom:20px;">
-                        <select id="category" style="margin:0; flex-grow:1;"></select>
-                        <button type="button" class="btn-primary" onclick="handleAddCategory()">+ NEW</button>
-                    </div>
-                    <textarea id="desc" rows="3" placeholder="Description"></textarea>
-                    <input type="file" onchange="handleFileSelect(event)" style="margin-bottom:10px;">
-                    <input type="text" id="imgUrl" placeholder="Or Image Link">
-                    <button type="submit" id="submit-btn" class="btn-primary" style="width:100%">PUBLISH</button>
-                </form>
-            </div>
+        <div class="admin-card">
+            <a href="index.html" style="text-decoration: none; color: #666;">← Back to Website</a>
+        </div>
+    </div>
 
-            <div class="admin-card" style="margin-top:20px;">
-                <h3>Manage Projects</h3>
-                <div id="admin-project-list"></div>
-            </div>
-
-            <div class="admin-card" style="margin-top:20px;">
-                <h3>Manage Categories</h3>
-                <div id="category-manage-list"></div>
-            </div>
-
-            <div class="admin-card" style="margin-top:20px; border-top: 4px solid var(--primary-red);">
-                <h3>Messages <span style="color:var(--primary-red)">Inbox</span></h3>
-                <div id="admin-messages-list"></div>
-            </div>
-
-            <button onclick="location.reload()" style="display:block; margin:20px auto; color:gray; background:none; border:none; cursor:pointer;">Logout</button>
-        </section>
-    </main>
-    <script src="../js files/store.js"></script>
-    <script src="../js files/components.js"></script>
-    <script src="../js files/admin.js"></script>
+    <script src="js files/admin.js"></script>
 </body>
 </html>

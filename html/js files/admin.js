@@ -15,8 +15,66 @@ function refreshDashboard() {
     renderAdminList();
     renderCategoryOptions();
     renderCategoryManager();
-    renderMessages(); // Load the inbox
+    renderMessages(); 
+    renderFeaturedSelector(); // New: Loads the featured work manager
 }
+
+// --- NEW: Featured Work Logic ---
+function renderFeaturedSelector() {
+    const selectionList = document.getElementById('featured-selection-list');
+    const allProjects = Store.getProjects();
+    let featuredIds = JSON.parse(localStorage.getItem('featuredProjectIds')) || [];
+
+    if (!selectionList) return; // Safety check
+
+    if (allProjects.length === 0) {
+        selectionList.innerHTML = "<p style='color:var(--text-gray)'>No projects found. Add some first!</p>";
+        return;
+    }
+
+    selectionList.innerHTML = allProjects.map(p => {
+        const isSelected = featuredIds.includes(p.id);
+        return `
+            <div class="select-card ${isSelected ? 'selected' : ''}" onclick="toggleFeatured(${p.id}, this)">
+                <img src="${p.images[0] || 'https://via.placeholder.com/150'}" alt="${p.title}">
+                <p>${p.title}</p>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleFeatured(id, element) {
+    let featuredIds = JSON.parse(localStorage.getItem('featuredProjectIds')) || [];
+    
+    if (featuredIds.includes(id)) {
+        featuredIds = featuredIds.filter(fid => fid !== id);
+        element.classList.remove('selected');
+    } else {
+        featuredIds.push(id);
+        element.classList.add('selected');
+    }
+    
+    localStorage.setItem('featuredProjectIds', JSON.stringify(featuredIds));
+}
+
+function saveFeaturedWork() {
+    const btn = document.getElementById('save-featured-btn');
+    btn.innerText = "✓ Saved to Home Page!";
+    btn.style.background = "#28a745";
+    
+    setTimeout(() => {
+        btn.innerText = "Update Home Page Featured Work";
+        btn.style.background = "var(--primary-red)";
+    }, 2000);
+}
+
+// Attach the save function to the button (if not done in HTML)
+document.addEventListener('click', (e) => {
+    if(e.target && e.target.id === 'save-featured-btn') {
+        saveFeaturedWork();
+    }
+});
+
 
 // --- Inbox Logic ---
 function renderMessages() {
@@ -39,10 +97,13 @@ function dismissMessage(id) {
     renderMessages();
 }
 
-// --- Project & Category Logic (Same as before) ---
+// --- Project & Category Logic ---
 function handleFileSelect(e) {
     const reader = new FileReader();
-    reader.onload = (ev) => { base64Image = ev.target.result; document.getElementById('imgUrl').placeholder = "File Loaded"; };
+    reader.onload = (ev) => { 
+        base64Image = ev.target.result; 
+        document.getElementById('imgUrl').placeholder = "File Loaded"; 
+    };
     reader.readAsDataURL(e.target.files[0]);
 }
 
@@ -59,13 +120,15 @@ function handleUpload(e) {
     };
     if (currentEditId) {
         const idx = projects.findIndex(p => p.id == currentEditId);
-        projectData.id = currentEditId; projects[idx] = projectData;
+        projectData.id = currentEditId; 
+        projects[idx] = projectData;
     } else {
-        projectData.id = Date.now(); projects.push(projectData);
+        projectData.id = Date.now(); 
+        projects.push(projectData);
     }
     Store.saveProjects(projects);
     cancelEdit();
-    renderAdminList();
+    refreshDashboard(); // Refresh all including the selector
 }
 
 function editProject(id) {
@@ -78,10 +141,16 @@ function editProject(id) {
     window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function deleteProject(id) { if(confirm("Delete?")) { Store.deleteProject(id); renderAdminList(); } }
+function deleteProject(id) { 
+    if(confirm("Delete?")) { 
+        Store.deleteProject(id); 
+        refreshDashboard(); 
+    } 
+}
 
 function cancelEdit() {
-    currentEditId = null; base64Image = "";
+    currentEditId = null; 
+    base64Image = "";
     document.getElementById('upload-form').reset();
     document.getElementById('form-title').innerText = "Project Manager";
 }
@@ -98,7 +167,29 @@ function renderAdminList() {
     `).join('');
 }
 
-function renderCategoryOptions() { document.getElementById('category').innerHTML = Store.getCategories().map(c => `<option value="${c}">${c}</option>`).join(''); }
-function renderCategoryManager() { document.getElementById('category-manage-list').innerHTML = Store.getCategories().map(c => `<div class="admin-item"><span>${c}</span><button class="btn-delete" onclick="removeCategory('${c}')">Remove</button></div>`).join(''); }
-function handleAddCategory() { const n = prompt("Name:"); if(n) { Store.addCategory(n); refreshDashboard(); } }
-function removeCategory(n) { if(confirm("Delete?")) { Store.deleteCategory(n); refreshDashboard(); } }
+function renderCategoryOptions() { 
+    document.getElementById('category').innerHTML = Store.getCategories().map(c => `<option value="${c}">${c}</option>`).join(''); 
+}
+
+function renderCategoryManager() { 
+    document.getElementById('category-manage-list').innerHTML = Store.getCategories().map(c => `
+        <div class="admin-item">
+            <span>${c}</span>
+            <button class="btn-delete" onclick="removeCategory('${c}')">Remove</button>
+        </div>`).join(''); 
+}
+
+function handleAddCategory() { 
+    const n = prompt("Name:"); 
+    if(n) { 
+        Store.addCategory(n); 
+        refreshDashboard(); 
+    } 
+}
+
+function removeCategory(n) { 
+    if(confirm("Delete?")) { 
+        Store.deleteCategory(n); 
+        refreshDashboard(); 
+    } 
+}
