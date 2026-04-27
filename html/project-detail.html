@@ -10,39 +10,40 @@
 
     <main class="container" id="detail-container" style="margin-top: 80px;">
         </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js files/store.js"></script>
     <script src="../js files/components.js"></script>
     <script>
+    // We wrap everything in an async function so we can use 'await'
+    async function renderDetails() {
         const params = new URLSearchParams(window.location.search);
-const projectId = params.get('id');
-const project = Store.getProjects().find(p => p.id == projectId);
+        const projectId = params.get('id');
+        
+        // IMPORTANT: We must 'await' the projects from the cloud
+        const project = await Store.getProjectById(projectId);
 
-if (project) {
-    document.getElementById('detail-container').innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-            <div>
-                <img src="${project.images[0]}" style="width: 100%; border-radius: 8px;" id="main-img">
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    ${project.images.map(img => `
-                        <img src="${img}" 
-                             onclick="document.getElementById('main-img').src='${img}'" 
-                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid #333;">
-                    `).join('')}
+        if (project) {
+            document.getElementById('detail-container').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+                    <div>
+                        <img src="${project.image_url}" style="width: 100%; border-radius: 8px;" id="main-img" onerror="this.src='assets/placeholder.jpg'">
+                    </div>
+                    <div>
+                        <span style="color: var(--primary-red); font-weight: bold;">${project.category}</span>
+                        <h1 style="font-size: 3rem; margin: 10px 0;">${project.title}</h1>
+                        <p style="color: var(--text-gray); line-height: 1.8; margin-bottom: 30px;">${project.description || 'No description provided.'}</p>
+                        <hr style="border: 0; border-top: 1px solid #333; margin-bottom: 20px;">
+                        <p><strong>Published:</strong> ${new Date(project.created_at).toLocaleDateString() || 'Recent'}</p>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span style="color: var(--primary-red); font-weight: bold;">${project.category}</span>
-                <h1 style="font-size: 3rem; margin: 10px 0;">${project.title}</h1>
-                <p style="color: var(--text-gray); line-height: 1.8; margin-bottom: 30px;">${project.description}</p>
-                <hr style="border: 0; border-top: 1px solid #333; margin-bottom: 20px;">
-                <p><strong>Published:</strong> ${project.date}</p>
-            </div>
-        </div>
-    `;
-} else {
-    document.getElementById('detail-container').innerHTML = "<h1>Project not found.</h1>";
-}
-    </script>
+            `;
+        } else {
+            document.getElementById('detail-container').innerHTML = "<h1>Project not found.</h1>";
+        }
+    }
+
+    // Run the function
+    renderDetails();
+</script>
 </body>
 </html>

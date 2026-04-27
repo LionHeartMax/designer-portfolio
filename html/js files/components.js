@@ -12,9 +12,10 @@ const Components = {
         </nav>
     `,
 
+    // Updated to use project.image_url to match Supabase columns
     projectCard: (project) => `
         <div class="card" style="background: var(--card-bg); border-radius: 8px; overflow: hidden;">
-            <img src="${project.images[0]}" style="width: 100%; height: 250px; object-fit: cover;">
+            <img src="${project.image_url}" style="width: 100%; height: 250px; object-fit: cover;" onerror="this.src='assets/placeholder.jpg'">
             <div style="padding: 20px;">
                 <span style="color: var(--primary-red); font-size: 0.8rem;">${project.category}</span>
                 <h3 style="margin: 10px 0;">${project.title}</h3>

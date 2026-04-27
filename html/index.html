@@ -17,13 +17,26 @@
         <h2>Featured Work</h2>
         <div id="featured-projects" class="project-grid"></div>
     </section>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js files/store.js"></script>
     <script src="/js files/components.js"></script>
     <script>
-        // Render Featured Projects (First 3)
-        const featured = Store.getProjects().slice(0, 3);
-        document.getElementById('featured-projects').innerHTML = featured.map(p => Components.projectCard(p)).join('');
-    </script>
+    async function renderFeatured() {
+        // 1. Get projects from the cloud
+        const allProjects = await Store.getProjects();
+        
+        // 2. Take only the first 3 for the "Featured" section
+        const featured = allProjects.slice(0, 3);
+        
+        // 3. Render them into the grid
+        const featuredGrid = document.getElementById('featured-projects');
+        if (featuredGrid) {
+            featuredGrid.innerHTML = featured.map(p => Components.projectCard(p)).join('');
+        }
+    }
+
+    // Run the function
+    renderFeatured();
+</script>
 </body>
 </html>

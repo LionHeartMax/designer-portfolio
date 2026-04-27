@@ -26,30 +26,49 @@
             <div id="projects-grid" class="project-grid"></div>
         </section>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js files/store.js"></script>
     <script src="../js files/components.js"></script>
     <script>
-        const grid = document.getElementById('projects-grid');
-        const search = document.getElementById('searchInput');
-        const filter = document.getElementById('categoryFilter');
+    const grid = document.getElementById('projects-grid');
+    const search = document.getElementById('searchInput');
+    const filter = document.getElementById('categoryFilter');
 
-        function render(items) {
-            grid.innerHTML = items.map(p => Components.projectCard(p)).join('');
-        }
+    // We store the projects globally in this script so we don't 
+    // have to keep calling the database every time you type in the search bar.
+    let allProjects = [];
 
-        render(Store.getProjects());
+    async function initGallery() {
+        // 1. Fetch from Cloud
+        allProjects = await Store.getProjects();
+        
+        // 2. Initial Render
+        render(allProjects);
+        
+        // 3. Update Category Filter Options (Dynamic)
+        const cats = await Store.getCategories();
+        filter.innerHTML = `<option value="all">All Categories</option>` + 
+                           cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
 
-        [search, filter].forEach(el => el.addEventListener('input', () => {
-            const val = search.value.toLowerCase();
-            const cat = filter.value;
-            const filtered = Store.getProjects().filter(p => {
-                const matchSearch = p.title.toLowerCase().includes(val);
-                const matchCat = cat === 'all' || p.category === cat;
-                return matchSearch && matchCat;
-            });
-            render(filtered);
-        }));
-    </script>
+    function render(items) {
+        grid.innerHTML = items.map(p => Components.projectCard(p)).join('');
+    }
+
+    [search, filter].forEach(el => el.addEventListener('input', () => {
+        const val = search.value.toLowerCase();
+        const cat = filter.value;
+        
+        const filtered = allProjects.filter(p => {
+            const matchSearch = p.title.toLowerCase().includes(val);
+            const matchCat = cat === 'all' || p.category === cat;
+            return matchSearch && matchCat;
+        });
+        render(filtered);
+    }));
+
+    // Start the process
+    initGallery();
+</script>
 </body>
 </html>

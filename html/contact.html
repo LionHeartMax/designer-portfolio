@@ -32,26 +32,33 @@
             </div>
         </section>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js files/store.js"></script>
     <script src="../js files/components.js"></script>
     <script>
-        document.getElementById('contact-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Create message object
-    const newMessage = {
-        name: e.target[0].value,
-        email: e.target[1].value,
-        text: e.target[3].value // Adjust index if your form fields differ
-    };
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Target inputs by their order or id
+        const formElements = e.target.elements;
+        
+        // Create message object to match your Supabase table columns
+        const newMessage = {
+            name: e.target[0].value,    // First input
+            email: e.target[1].value,   // Second input
+            message: e.target[3].value  // Textarea (ignoring subject for now)
+        };
 
-    // Save to Store
-    Store.saveMessage(newMessage);
-    
-    alert("Message sent to the admin dashboard!");
-    e.target.reset();
-});
-    </script>
+        // Save to Store using 'await' since it's now cloud-based
+        try {
+            await Store.saveMessage(newMessage);
+            alert("Message sent! The designer will see it in their dashboard.");
+            e.target.reset();
+        } catch (err) {
+            console.error("Submission failed:", err);
+            alert("Oops! Something went wrong. Please try again.");
+        }
+    });
+</script>
 </body>
 </html>

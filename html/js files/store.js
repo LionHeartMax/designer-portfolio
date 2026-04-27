@@ -1,35 +1,63 @@
+// 1. Initialize Supabase Connection
+const _supabase = supabase.createClient(
+    'https://zvqhgotlwcrnpylatbpi.supabase.co', 
+    'sb_publishable_5flbGfEXWEiXpxYvOvEYdA_9k0H1D0k'
+);
+
 const Store = {
-    init() {
-        if (!localStorage.getItem('projects')) localStorage.setItem('projects', JSON.stringify([]));
-        if (!localStorage.getItem('categories')) localStorage.setItem('categories', JSON.stringify(["Branding", "UI/UX"]));
-        if (!localStorage.getItem('messages')) localStorage.setItem('messages', JSON.stringify([]));
+    // Projects (Cloud Version)
+    getProjects: async () => {
+        const { data, error } = await _supabase.from('projects').select('*');
+        if (error) console.error("Error fetching projects:", error);
+        return data || [];
     },
 
-    // Projects
-    getProjects: () => JSON.parse(localStorage.getItem('projects')),
-    saveProjects: (p) => localStorage.setItem('projects', JSON.stringify(p)),
-    getProjectById: (id) => Store.getProjects().find(p => p.id == id),
-    deleteProject: (id) => Store.saveProjects(Store.getProjects().filter(p => p.id != id)),
-
-    // Categories
-    getCategories: () => JSON.parse(localStorage.getItem('categories')),
-    addCategory: (c) => {
-        const cats = Store.getCategories();
-        if(!cats.includes(c)) { cats.push(c); localStorage.setItem('categories', JSON.stringify(cats)); }
+    saveProject: async (project) => {
+        // This handles both New and Update (if you have an ID)
+        const { data, error } = await _supabase
+            .from('projects')
+            .upsert([project]);
+        
+        if (error) {
+            console.error("Error saving project:", error);
+            alert("Save failed: " + error.message);
+        }
+        return data;
     },
-    deleteCategory: (c) => localStorage.setItem('categories', JSON.stringify(Store.getCategories().filter(cat => cat !== c))),
 
-    // Messages (NEW)
-    getMessages: () => JSON.parse(localStorage.getItem('messages')),
-    saveMessage(msg) {
-        const msgs = this.getMessages();
-        msg.id = Date.now();
-        msgs.push(msg);
-        localStorage.setItem('messages', JSON.stringify(msgs));
+    getProjectById: async (id) => {
+        const { data, error } = await _supabase.from('projects').select('*').eq('id', id).single();
+        if (error) console.error("Error finding project:", error);
+        return data;
     },
-    deleteMessage(id) {
-        const msgs = this.getMessages().filter(m => m.id != id);
-        localStorage.setItem('messages', JSON.stringify(msgs));
+
+    deleteProject: async (id) => {
+        const { error } = await _supabase.from('projects').delete().eq('id', id);
+        if (error) console.error("Error deleting project:", error);
+    },
+
+    // Categories (Cloud Version)
+    getCategories: async () => {
+        const { data, error } = await _supabase.from('categories').select('*');
+        if (error) console.error("Error fetching categories:", error);
+        return data ? data.map(c => c.name) : ["Branding", "UI/UX"];
+    },
+
+    addCategory: async (categoryName) => {
+        const { error } = await _supabase.from('categories').insert([{ name: categoryName }]);
+        if (error) console.error("Error adding category:", error);
+    },
+
+    // Messages (Cloud Version)
+    getMessages: async () => {
+        const { data, error } = await _supabase.from('projects_messages').select('*');
+        return data || [];
+    },
+
+    saveMessage: async (msg) => {
+        const { error } = await _supabase.from('projects_messages').insert([msg]);
+        if (error) console.error("Error saving message:", error);
     }
 };
-Store.init();
+
+// Note: We removed Store.init() because the cloud database handles initial setup!
