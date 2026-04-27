@@ -39,13 +39,33 @@ const Store = {
     // Categories (Cloud Version)
     getCategories: async () => {
         const { data, error } = await _supabase.from('categories').select('*');
-        if (error) console.error("Error fetching categories:", error);
-        return data ? data.map(c => c.name) : ["Branding", "UI/UX"];
+        if (error) {
+            console.error("Error fetching categories:", error);
+            return ["Branding", "UI/UX"]; // Fallback if database fails
+        }
+        // If data is empty, return the defaults so the UI isn't blank
+        return (data && data.length > 0) ? data.map(c => c.name) : ["Branding", "UI/UX"];
     },
 
     addCategory: async (categoryName) => {
         const { error } = await _supabase.from('categories').insert([{ name: categoryName }]);
-        if (error) console.error("Error adding category:", error);
+        if (error) {
+            console.error("Error adding category:", error);
+            alert("Failed to add category: " + error.message);
+        }
+    },
+
+    // ADD THIS MISSING FUNCTION:
+    deleteCategory: async (categoryName) => {
+        const { error } = await _supabase
+            .from('categories')
+            .delete()
+            .eq('name', categoryName);
+            
+        if (error) {
+            console.error("Error deleting category:", error);
+            alert("Failed to delete category: " + error.message);
+        }
     },
 
     // Messages (Cloud Version)

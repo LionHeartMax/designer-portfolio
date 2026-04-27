@@ -55,11 +55,13 @@ async function handleUpload(e) {
     e.preventDefault();
     const finalImage = base64Image || document.getElementById('imgUrl').value;
     
+    // Inside handleUpload function
     const projectData = {
-        title: document.getElementById('title').value,
-        category: document.getElementById('category').value,
-        image_url: finalImage // Updated property name
-    };
+    title: document.getElementById('title').value,
+    category: document.getElementById('category').value,
+    description: document.getElementById('desc').value, 
+    image_url: finalImage 
+};
 
     if (currentEditId) {
         projectData.id = currentEditId; 
@@ -71,10 +73,11 @@ async function handleUpload(e) {
 }
 
 async function editProject(id) {
-    const p = await Store.getProjectById(id); // Added await
+    const p = await Store.getProjectById(id);
     currentEditId = id;
     document.getElementById('title').value = p.title;
     document.getElementById('category').value = p.category;
+    document.getElementById('desc').value = p.description || ""; 
     document.getElementById('form-title').innerText = "Edit Project";
     window.scrollTo({top:0, behavior:'smooth'});
 }
