@@ -1,7 +1,7 @@
 const Components = {
     navbar: `
         <nav style="padding: 20px; display: flex; justify-content: space-between; align-items: center;" class="container">
-            <div class="logo" style="font-weight: 900; font-size: 1.5rem;">LOGO<span style="color:var(--primary-red)">.</span></div>
+            <div class="logo"><a href="index.html"><img src="assets/logo.jpeg" alt="Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 5px;"></a></div>
             <div class="links">
                 <a href="index.html">Home</a>
                 <a href="projects.html">Projects</a>
