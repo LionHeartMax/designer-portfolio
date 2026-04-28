@@ -77,6 +77,17 @@ const Store = {
     saveMessage: async (msg) => {
         const { error } = await _supabase.from('projects_messages').insert([msg]);
         if (error) console.error("Error saving message:", error);
+    },
+    deleteMessage: async (id) => {
+        const { error } = await _supabase
+            .from('projects_messages')
+            .delete()
+            .eq('id', id);
+            
+        if (error) {
+            console.error("Error deleting message:", error);
+            alert("Failed to delete message: " + error.message);
+        }
     }
 };
 
