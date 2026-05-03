@@ -1,16 +1,21 @@
 const Components = {
     navbar: `
-        <nav style="padding: 20px; display: flex; justify-content: space-between; align-items: center;" class="container">
-            <div class="logo"><a href="index.html"><img src="assets/logo.jpeg" alt="Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 5px;"></a></div>
-            <div class="links">
-                <a href="index.html">Home</a>
-                <a href="projects.html">Projects</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
-                <a href="admin.html" style="border: 1px solid var(--primary-red); padding: 5px 10px; margin-left: 10px;">Admin</a>
-            </div>
-        </nav>
-    `,
+    <nav style="padding: 20px; display: flex; justify-content: space-between; align-items: center;" class="container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="assets/logo.jpeg" alt="Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 5px;">
+            </a>
+        </div>
+        <!-- Added 'nav-links' class here -->
+        <div class="links nav-links">
+            <a href="index.html">Home</a>
+            <a href="projects.html">Projects</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" style="border: 1px solid var(--primary-red); padding: 5px 10px; margin-left: 10px;">Admin</a>
+        </div>
+    </nav>
+`,
 
     // Updated to handle missing dates gracefully
     projectCard: (project) => {
