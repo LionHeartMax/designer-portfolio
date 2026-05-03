@@ -122,3 +122,14 @@ input:focus, textarea:focus, select:focus {
     align-items: center;
     min-height: 70vh;
 }
+
+@media (max-width: 768px) {
+    .nav-links {
+        gap: 15px; /* Less space on mobile */
+        font-size: 0.85rem;
+    }
+    
+    .project-grid {
+        grid-template-columns: 1fr; /* Single column on phones */
+    }
+}

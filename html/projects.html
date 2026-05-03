@@ -18,43 +18,77 @@
                 
                 <select id="categoryFilter" style="padding: 12px; background: var(--card-bg); border: 1px solid #333; color: white; border-radius: 4px;">
                     <option value="all">All Categories</option>
-                    <option value="Branding">Branding</option>
-                    <option value="UI/UX">UI/UX</option>
                 </select>
             </div>
 
+            <!-- Project Grid -->
             <div id="projects-grid" class="project-grid"></div>
+
+            <!-- Load More Button -->
+            <div style="text-align: center; margin: 50px 0;">
+                <button id="load-more-btn" class="btn-primary" style="display: none;">Load More</button>
+            </div>
         </section>
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js files/store.js"></script>
     <script src="/js files/components.js"></script>
+    
     <script>
     const grid = document.getElementById('projects-grid');
     const search = document.getElementById('searchInput');
     const filter = document.getElementById('categoryFilter');
+    const loadMoreBtn = document.getElementById('load-more-btn');
 
-    // We store the projects globally in this script so we don't 
-    // have to keep calling the database every time you type in the search bar.
-    let allProjects = [];
+    let allProjects = []; // Keeps track of all loaded projects for searching/filtering
+    let currentPage = 0;
+    const itemsPerPage = 12;
 
     async function initGallery() {
-        // 1. Fetch from Cloud
-        allProjects = await Store.getProjects();
-        
-        // 2. Initial Render
-        render(allProjects);
-        
-        // 3. Update Category Filter Options (Dynamic)
+        // 1. Load categories dynamically
         const cats = await Store.getCategories();
         filter.innerHTML = `<option value="all">All Categories</option>` + 
                            cats.map(c => `<option value="${c}">${c}</option>`).join('');
+        
+        // 2. Fetch first batch of projects
+        await loadMoreProjects();
     }
 
-    function render(items) {
+    async function loadMoreProjects() {
+        // Fetch only the next 12 from Supabase
+        const newProjects = await Store.getProjects(currentPage, itemsPerPage);
+        
+        if (newProjects.length > 0) {
+            // Add them to our global list
+            allProjects = [...allProjects, ...newProjects];
+            
+            // Render only the new items to the grid
+            appendRender(newProjects);
+            
+            // Show/Hide "Load More" button based on results
+            if (newProjects.length === itemsPerPage) {
+                loadMoreBtn.style.display = 'inline-block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
+    }
+
+    // This function adds to the grid instead of clearing it
+    function appendRender(items) {
+        const html = items.map(p => Components.projectCard(p)).join('');
+        grid.insertAdjacentHTML('beforeend', html);
+    }
+
+    // This function is for searching/filtering (it clears and re-renders)
+    function fullRender(items) {
         grid.innerHTML = items.map(p => Components.projectCard(p)).join('');
     }
 
+    // Handle Search and Filter
     [search, filter].forEach(el => el.addEventListener('input', () => {
         const val = search.value.toLowerCase();
         const cat = filter.value;
@@ -64,11 +98,25 @@
             const matchCat = cat === 'all' || p.category === cat;
             return matchSearch && matchCat;
         });
-        render(filtered);
+
+        // If searching, hide the load more button to avoid logic conflicts
+        if (val !== "" || cat !== "all") {
+            loadMoreBtn.style.display = 'none';
+        } else if (allProjects.length % itemsPerPage === 0) {
+            loadMoreBtn.style.display = 'inline-block';
+        }
+
+        fullRender(filtered);
     }));
 
-    // Start the process
+    // "Load More" Button Click
+    loadMoreBtn.addEventListener('click', () => {
+        currentPage++;
+        loadMoreProjects();
+    });
+
+    // Start
     initGallery();
-</script>
+    </script>
 </body>
 </html>

@@ -5,10 +5,21 @@ const _supabase = supabase.createClient(
 );
 
 const Store = {
-    // Projects (Cloud Version)
-    getProjects: async () => {
-        const { data, error } = await _supabase.from('projects').select('*');
-        if (error) console.error("Error fetching projects:", error);
+    // UPDATED: Fetches only a specific range of projects
+    getProjects: async (page = 0, limit = 12) => {
+        const from = page * limit;
+        const to = from + limit - 1;
+
+        const { data, error } = await _supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: false }) // Shows newest first
+            .range(from, to); // Only grabs the 12 for this "page"
+
+        if (error) {
+            console.error("Error fetching projects:", error);
+            return [];
+        }
         return data || [];
     },
 
