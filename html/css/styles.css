@@ -103,6 +103,18 @@ input:focus, textarea:focus, select:focus {
     color: white;
 }
 
+/* Navigation Spacing */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px; 
+}
+
+.nav-links a {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
 /* Login Section */
 #login-section {
     display: flex;

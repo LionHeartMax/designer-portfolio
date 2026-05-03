@@ -6,7 +6,6 @@ const Components = {
                 <img src="assets/logo.jpeg" alt="Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 5px;">
             </a>
         </div>
-        <!-- Added 'nav-links' class here -->
         <div class="links nav-links">
             <a href="index.html">Home</a>
             <a href="projects.html">Projects</a>
