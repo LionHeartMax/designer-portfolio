@@ -5,7 +5,21 @@ const _supabase = supabase.createClient(
 );
 
 const Store = {
-    // UPDATED: Fetches only a specific range of projects
+    // NEW: Fetches EVERY project so categories work instantly
+    getAllProjects: async () => {
+        const { data, error } = await _supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Error fetching all projects:", error);
+            return [];
+        }
+        return data || [];
+    },
+
+    // KEEPS: Your existing pagination logic for the initial "All" view
     getProjects: async (page = 0, limit = 12) => {
         const from = page * limit;
         const to = from + limit - 1;
@@ -13,8 +27,8 @@ const Store = {
         const { data, error } = await _supabase
             .from('projects')
             .select('*')
-            .order('created_at', { ascending: false }) // Shows newest first
-            .range(from, to); // Only grabs the 12 for this "page"
+            .order('created_at', { ascending: false })
+            .range(from, to);
 
         if (error) {
             console.error("Error fetching projects:", error);
@@ -24,7 +38,6 @@ const Store = {
     },
 
     saveProject: async (project) => {
-        // This handles both New and Update (if you have an ID)
         const { data, error } = await _supabase
             .from('projects')
             .upsert([project]);
@@ -47,14 +60,12 @@ const Store = {
         if (error) console.error("Error deleting project:", error);
     },
 
-    // Categories (Cloud Version)
     getCategories: async () => {
         const { data, error } = await _supabase.from('categories').select('*');
         if (error) {
             console.error("Error fetching categories:", error);
-            return ["Branding", "UI/UX"]; // Fallback if database fails
+            return ["Branding", "UI/UX"]; 
         }
-        // If data is empty, return the defaults so the UI isn't blank
         return (data && data.length > 0) ? data.map(c => c.name) : ["Branding", "UI/UX"];
     },
 
@@ -66,7 +77,6 @@ const Store = {
         }
     },
 
-    // ADD THIS MISSING FUNCTION:
     deleteCategory: async (categoryName) => {
         const { error } = await _supabase
             .from('categories')
@@ -79,7 +89,6 @@ const Store = {
         }
     },
 
-    // Messages (Cloud Version)
     getMessages: async () => {
         const { data, error } = await _supabase.from('projects_messages').select('*');
         return data || [];
@@ -89,6 +98,7 @@ const Store = {
         const { error } = await _supabase.from('projects_messages').insert([msg]);
         if (error) console.error("Error saving message:", error);
     },
+
     deleteMessage: async (id) => {
         const { error } = await _supabase
             .from('projects_messages')
@@ -101,5 +111,3 @@ const Store = {
         }
     }
 };
-
-// Note: We removed Store.init() because the cloud database handles initial setup!

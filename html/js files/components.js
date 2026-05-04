@@ -22,16 +22,13 @@ const Components = {
         ? new Date(project.created_at).toLocaleDateString() 
         : "Recent Work";
 
-    // We add a small check to see if the URL actually exists
-    const imageUrl = project.image_url ? project.image_url : 'assets/placeholder.jpg';
-
     return `
         <div class="card" style="background: var(--card-bg); border-radius: 8px; overflow: hidden;">
-            <img src="${imageUrl}" 
+            <img src="${project.image_url || 'assets/placeholder.jpg'}" 
                  alt="${project.title}"
                  loading="lazy"
-                 style="width: 100%; height: 250px; object-fit: cover; display: block; background: #222;" 
-                 onerror="this.onerror=null; this.src='assets/placeholder.jpg';">
+                 style="width: 100%; height: 250px; object-fit: cover; display: block;" 
+                 onerror="this.src='assets/placeholder.jpg'">
             <div style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="color: var(--primary-red); font-size: 0.8rem;">${project.category}</span>

@@ -41,9 +41,8 @@
     const filter = document.getElementById('categoryFilter');
     const loadMoreBtn = document.getElementById('load-more-btn');
 
-    let allProjects = []; // Keeps track of all loaded projects for searching/filtering
-    let currentPage = 0;
-    const itemsPerPage = 12;
+    let allProjects = []; // The master list of all 80+ projects
+    let visibleCount = 12; // How many to show initially
 
     async function initGallery() {
         // 1. Load categories dynamically
@@ -51,71 +50,55 @@
         filter.innerHTML = `<option value="all">All Categories</option>` + 
                            cats.map(c => `<option value="${c}">${c}</option>`).join('');
         
-        // 2. Fetch first batch of projects
-        await loadMoreProjects();
+        // 2. Fetch EVERY project at once using the new Store function
+        // This ensures categories and search work on the full dataset immediately
+        allProjects = await Store.getAllProjects();
+        
+        // 3. Initial Render
+        renderGallery();
     }
 
-    async function loadMoreProjects() {
-        // Fetch only the next 12 from Supabase
-        const newProjects = await Store.getProjects(currentPage, itemsPerPage);
-        
-        if (newProjects.length > 0) {
-            // Add them to our global list
-            allProjects = [...allProjects, ...newProjects];
-            
-            // Render only the new items to the grid
-            appendRender(newProjects);
-            
-            // Show/Hide "Load More" button based on results
-            if (newProjects.length === itemsPerPage) {
-                loadMoreBtn.style.display = 'inline-block';
-            } else {
-                loadMoreBtn.style.display = 'none';
-            }
+    function renderGallery() {
+        const searchTerm = search.value.toLowerCase();
+        const selectedCat = filter.value;
+
+        // Filter the full list based on Search and Category
+        const filtered = allProjects.filter(p => {
+            const matchSearch = p.title.toLowerCase().includes(searchTerm);
+            const matchCat = selectedCat === 'all' || p.category === selectedCat;
+            return matchSearch && matchCat;
+        });
+
+        // Logic: 
+        // If filtering/searching, show ALL results.
+        // If viewing "All", only show the amount specified by visibleCount.
+        const isFiltering = searchTerm !== "" || selectedCat !== "all";
+        const toDisplay = isFiltering ? filtered : filtered.slice(0, visibleCount);
+
+        // Update the Grid
+        grid.innerHTML = toDisplay.map(p => Components.projectCard(p)).join('');
+
+        // Show/Hide "Load More" button
+        // Only show it if we are NOT filtering and there are more items to reveal
+        if (!isFiltering && visibleCount < filtered.length) {
+            loadMoreBtn.style.display = 'inline-block';
         } else {
             loadMoreBtn.style.display = 'none';
         }
     }
 
-    // This function adds to the grid instead of clearing it
-    function appendRender(items) {
-        const html = items.map(p => Components.projectCard(p)).join('');
-        grid.insertAdjacentHTML('beforeend', html);
-    }
-
-    // This function is for searching/filtering (it clears and re-renders)
-    function fullRender(items) {
-        grid.innerHTML = items.map(p => Components.projectCard(p)).join('');
-    }
-
-    // Handle Search and Filter
+    // Handle Search and Filter inputs
     [search, filter].forEach(el => el.addEventListener('input', () => {
-        const val = search.value.toLowerCase();
-        const cat = filter.value;
-        
-        const filtered = allProjects.filter(p => {
-            const matchSearch = p.title.toLowerCase().includes(val);
-            const matchCat = cat === 'all' || p.category === cat;
-            return matchSearch && matchCat;
-        });
-
-        // If searching, hide the load more button to avoid logic conflicts
-        if (val !== "" || cat !== "all") {
-            loadMoreBtn.style.display = 'none';
-        } else if (allProjects.length % itemsPerPage === 0) {
-            loadMoreBtn.style.display = 'inline-block';
-        }
-
-        fullRender(filtered);
+        renderGallery();
     }));
 
     // "Load More" Button Click
     loadMoreBtn.addEventListener('click', () => {
-        currentPage++;
-        loadMoreProjects();
+        visibleCount += 12; // Reveal the next 12
+        renderGallery();
     });
 
-    // Start
+    // Start the process
     initGallery();
     </script>
 </body>
