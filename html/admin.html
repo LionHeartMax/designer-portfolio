@@ -3,12 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/styles.css">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard | Portfolio</title>
+    <style>
+        /* Essential for managing 80+ projects without the UI breaking */
+        #admin-project-list {
+            max-height: 800px; /* Gives you a scrollable area within the card */
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        /* Custom scrollbar for a cleaner look */
+        #admin-project-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        #admin-project-list::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
     <div id="navbar-placeholder"></div>
     <main class="container" style="padding-bottom: 50px;">
         
+        <!-- Login Section -->
         <section id="login-section">
             <div class="admin-card">
                 <h2>Admin Login</h2>
@@ -18,41 +35,61 @@
             </div>
         </section>
 
+        <!-- Main Dashboard -->
         <section id="admin-dashboard" style="display:none;">
             <div class="admin-card">
                 <h2 id="form-title">Project Manager</h2>
                 <form id="upload-form" onsubmit="handleUpload(event)">
                     <input type="text" id="title" placeholder="Title" required>
+                    
                     <div style="display:flex; gap:10px; margin-bottom:20px;">
                         <select id="category" style="margin:0; flex-grow:1;"></select>
                         <button type="button" class="btn-primary" onclick="handleAddCategory()">+ NEW</button>
                     </div>
+                    
                     <textarea id="desc" rows="3" placeholder="Description"></textarea>
-                    <input type="file" onchange="handleFileSelect(event)" style="margin-bottom:10px;">
-                    <input type="text" id="imgUrl" placeholder="Or Image Link">
-                    <button type="submit" id="submit-btn" class="btn-primary" style="width:100%">PUBLISH</button>
+                    
+                    <div style="margin: 15px 0; padding: 15px; border: 1px dashed #444; border-radius: 8px;">
+                        <label style="display:block; margin-bottom:10px; font-size: 0.8rem; color: #888;">Project Image (File or Link)</label>
+                        <input type="file" id="fileInput" onchange="handleFileSelect(event)" style="margin-bottom:10px; width: 100%;">
+                        <input type="text" id="imgUrl" placeholder="Or Paste Supabase Bucket Link">
+                    </div>
+
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" id="submit-btn" class="btn-primary" style="flex-grow:2">PUBLISH</button>
+                        <button type="button" onclick="cancelEdit()" class="btn-secondary" style="flex-grow:1; background:#333; color:white; border:none; border-radius:4px; cursor:pointer;">CANCEL</button>
+                    </div>
                 </form>
             </div>
 
+            <!-- Project List (The part that handles your 80+ items) -->
             <div class="admin-card" style="margin-top:20px;">
-                <h3>Manage Projects</h3>
-                <div id="admin-project-list"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>Manage Projects</h3>
+                    <small id="project-count" style="color:var(--primary-red)"></small>
+                </div>
+                <div id="admin-project-list">
+                    <!-- JavaScript will inject all projects here -->
+                </div>
             </div>
 
+            <!-- Category Manager -->
             <div class="admin-card" style="margin-top:20px;">
                 <h3>Manage Categories</h3>
                 <div id="category-manage-list"></div>
             </div>
 
+            <!-- Inbox -->
             <div class="admin-card" style="margin-top:20px; border-top: 4px solid var(--primary-red);">
                 <h3>Messages <span style="color:var(--primary-red)">Inbox</span></h3>
                 <div id="admin-messages-list"></div>
             </div>
 
-            <button onclick="location.reload()" style="display:block; margin:20px auto; color:gray; background:none; border:none; cursor:pointer;">Logout</button>
+            <button onclick="location.reload()" style="display:block; margin:20px auto; color:gray; background:none; border:none; cursor:pointer;">Logout & Refresh</button>
         </section>
         
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js files/store.js"></script>
     <script src="/js files/components.js"></script>

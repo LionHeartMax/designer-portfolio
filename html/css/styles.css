@@ -9,7 +9,7 @@
 
 /* Base Setup */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif;}
-body { background-color: var(--bg-black); color: var(--text-white); line-height: 1.6;}
+body { background-color: var(--bg-black); color: var(--text-white); line-height: 1.6; overflow-x: hidden;}
 a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* Layout */
@@ -26,14 +26,15 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: var(--transition);
+    border-radius: 4px;
 }
 
 .btn-primary:hover { 
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4);
 }
 
-/* Project Grid */
+/* Project Grid - Optimized for Large Inventories */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -41,22 +42,31 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
     margin-top: 40px;
 }
 
-/* Admin Panel Styling */
+/* Admin Panel Styling - Optimized for 80+ Projects */
 .admin-card {
     background: var(--card-bg);
-    padding: 40px;
+    padding: 30px;
     border-radius: 12px;
-    max-width: 600px;
-    margin: 50px auto;
+    max-width: 800px; /* Increased slightly for better list viewing */
+    margin: 30px auto;
     border: 1px solid #333;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.admin-card h2, .admin-card h3 {
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+/* The Scrollable List Container (The "Hidden Project" Fix) */
+#admin-project-list {
+    max-height: 500px; /* Keeps the list from growing infinitely */
+    overflow-y: auto;
+    margin-top: 15px;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-red) #1a1a1a;
 }
+
+/* Custom Scrollbar for Chrome/Safari */
+#admin-project-list::-webkit-scrollbar { width: 6px; }
+#admin-project-list::-webkit-scrollbar-track { background: #151515; }
+#admin-project-list::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
 
 /* Form Elements */
 input, textarea, select {
@@ -76,16 +86,21 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--primary-red);
 }
 
-/* Admin List Management */
+/* Admin Item Styling with Image Support */
 .admin-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 12px;
     background: #252525;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    margin-bottom: 12px;
+    border-radius: 6px;
     border-left: 3px solid var(--primary-red);
+    transition: background 0.2s;
+}
+
+.admin-item:hover {
+    background: #2a2a2a;
 }
 
 .btn-delete {
@@ -96,6 +111,7 @@ input:focus, textarea:focus, select:focus {
     cursor: pointer;
     border-radius: 4px;
     font-size: 0.8rem;
+    transition: var(--transition);
 }
 
 .btn-delete:hover {
@@ -103,33 +119,19 @@ input:focus, textarea:focus, select:focus {
     color: white;
 }
 
-/* Navigation Spacing */
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 30px; 
-}
-
-.nav-links a {
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-/* Login Section */
-#login-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 70vh;
-}
-
+/* Media Queries */
 @media (max-width: 768px) {
     .nav-links {
-        gap: 15px; /* Less space on mobile */
+        gap: 15px;
         font-size: 0.85rem;
     }
     
     .project-grid {
-        grid-template-columns: 1fr; /* Single column on phones */
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-card {
+        padding: 20px;
+        margin: 20px 10px;
     }
 }
